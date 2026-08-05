@@ -1,0 +1,109 @@
+name: Create Repository Self-Service
+
+on:
+  issues:
+    types:
+      - opened
+
+permissions:
+  contents: read
+
+jobs:
+  create-repository:
+    if: startsWith(github.event.issue.title, '[issue-template-create-repository]')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Parse issue form inputs
+        id: parse
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const body = context.payload.issue.body || '';
+
+            function extractField(label) {
+              const pattern = new RegExp(`###\\s+${label}\\s*\\n+([\\s\\S]*?)(?=\\n###\\s+|$)`);
+              const match = body.match(pattern);
+
+              if (!match) {
+                throw new Error(`Missing issue form field: ${label}`);
+              }
+
+              return match[1]
+                .replace(/<!--[\s\S]*?-->/g, '')
+                .trim();
+            }
+
+            const technologyInput = extractField('Technology');
+            const repositoryName = extractField('Repository Name');
+            const technology = technologyInput.toLowerCase();
+            const supportedTechnologies = new Set(['docker', 'maven']);
+
+            if (!supportedTechnologies.has(technology)) {
+              throw new Error(`Unsupported technology: ${technologyInput}`);
+            }
+
+            const templateRepositoryName = `template.${technology}`;
+
+            core.setOutput('technology', technology);
+            core.setOutput('technology_label', technologyInput);
+            core.setOutput('repository_name', repositoryName);
+            core.setOutput('template_repository_name', templateRepositoryName);
+
+      - name: Verify automation token
+        env:
+          GH_TOKEN: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${GH_TOKEN}" ]; then
+            echo "::error::Missing SELF_SERVICE_GH_TOKEN secret."
+            exit 1
+          fi
+
+      - name: Checkout template repository
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ github.repository_owner }}/${{ steps.parse.outputs.template_repository_name }}
+          path: template-repository
+          token: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
+
+      - name: Create repository from template code
+        id: create_repository
+        env:
+          GH_TOKEN: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPOSITORY_NAME: ${{ steps.parse.outputs.repository_name }}
+          TEMPLATE_REPOSITORY_NAME: ${{ steps.parse.outputs.template_repository_name }}
+        run: |
+          set -euo pipefail
+
+          if gh repo view "${OWNER}/${REPOSITORY_NAME}" >/dev/null 2>&1; then
+            echo "::error::Repository ${OWNER}/${REPOSITORY_NAME} already exists."
+            exit 1
+          fi
+
+          cd template-repository
+          rm -rf .git
+          git init --initial-branch=main
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add .
+          git commit -m "Initial commit from ${OWNER}/${TEMPLATE_REPOSITORY_NAME}"
+          gh repo create "${OWNER}/${REPOSITORY_NAME}" --private --source=. --remote=origin --push
+
+          repository_url="$(gh repo view "${OWNER}/${REPOSITORY_NAME}" --json url -q .url)"
+          echo "repository_url=${repository_url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Write workflow summary
+        env:
+          TECHNOLOGY: ${{ steps.parse.outputs.technology_label }}
+          REPOSITORY_NAME: ${{ steps.parse.outputs.repository_name }}
+          REPOSITORY_URL: ${{ steps.create_repository.outputs.repository_url }}
+        run: |
+          {
+            echo "## Repository created"
+            echo
+            echo "| Field | Value |"
+            echo "| --- | --- |"
+            echo "| Repository | [${REPOSITORY_NAME}](${REPOSITORY_URL}) |"
+            echo "| Technology | ${TECHNOLOGY} |"
+          } >> "${GITHUB_STEP_SUMMARY}"

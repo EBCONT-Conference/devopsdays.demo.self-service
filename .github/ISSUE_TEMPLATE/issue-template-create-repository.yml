@@ -1,0 +1,22 @@
+name: Create repository self-service
+description: Request a new repository via self-service workflow input.
+title: "[issue-template-create-repository] "
+body:
+  - type: dropdown
+    id: technology
+    attributes:
+      label: Technology
+      description: Select the technology to use for the new repository.
+      options:
+        - Docker
+        - Maven
+    validations:
+      required: true
+  - type: input
+    id: repository-name
+    attributes:
+      label: Repository Name
+      description: Enter the name of the repository to create.
+      placeholder: example-service
+    validations:
+      required: true
