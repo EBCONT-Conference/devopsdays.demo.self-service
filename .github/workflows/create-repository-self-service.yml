@@ -87,7 +87,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add .
-          git commit -m "Initial commit from ${OWNER}/${TEMPLATE_REPOSITORY_NAME}"
+          git commit -m "chore: Initial commit from ${OWNER}/${TEMPLATE_REPOSITORY_NAME}"
           gh repo create "${OWNER}/${REPOSITORY_NAME}" --private --source=. --remote=origin --push
 
           repository_url="$(gh repo view "${OWNER}/${REPOSITORY_NAME}" --json url -q .url)"
