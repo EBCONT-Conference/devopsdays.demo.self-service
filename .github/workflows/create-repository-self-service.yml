@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: read
+  issues: write
 
 jobs:
   create-repository:
@@ -50,6 +51,15 @@ jobs:
             core.setOutput('repository_name', repositoryName);
             core.setOutput('issue_author', issueAuthor);
             core.setOutput('template_repository_name', templateRepositoryName);
+
+      - name: Notify issue: in progress
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --body "⏳ Creating repository... [View workflow run](${RUN_URL})"
 
       - name: Verify automation token
         env:
@@ -123,3 +133,16 @@ jobs:
             echo "| Repository | [${REPOSITORY_NAME}](${REPOSITORY_URL}) |"
             echo "| Technology | ${TECHNOLOGY} |"
           } >> "${GITHUB_STEP_SUMMARY}"
+
+      - name: Notify issue: completed
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPOSITORY_URL: ${{ steps.create_repository.outputs.repository_url }}
+          REPOSITORY_NAME: ${{ steps.parse.outputs.repository_name }}
+        run: |
+          gh issue comment "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --body "✅ Repository created: [${REPOSITORY_NAME}](${REPOSITORY_URL})"
+          gh issue close "${{ github.event.issue.number }}" \
+            --repo "${{ github.repository }}" \
+            --reason completed
