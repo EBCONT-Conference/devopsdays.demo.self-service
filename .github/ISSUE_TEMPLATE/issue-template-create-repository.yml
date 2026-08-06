@@ -1,6 +1,7 @@
 name: Create repository self-service
 labels:
  - "create-repository"
+title: "Creating a demo repository for the logged in user"
 description: |
   Request a new repository via self-service workflow input.
   The repository will be named **devopsdays.demo.YOUR_USERNAME**.
