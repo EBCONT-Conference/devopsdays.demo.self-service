@@ -10,9 +10,9 @@ This repository contains two self-service workflows for participants of the **De
 
 # Resources
 
-| Workflow | Description |
-| --- | --- |
-| `.github/workflows/user-onboarding.yml` | Used to onboard a new user as external collaborator to the organization. |
+| Workflow                                               | Description |
+|--------------------------------------------------------| --- |
+| `.github/workflows/add-external-contributor.yml`       | Used to onboard a new user as external collaborator to the organization. |
 | `.github/workflows/create-repository-self-service.yml` | Issue driven workflow, used to create a new repository from a technology template (Docker, Maven,...). |
 
 # Usage

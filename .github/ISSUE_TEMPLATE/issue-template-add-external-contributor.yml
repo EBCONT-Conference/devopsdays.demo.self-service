@@ -1,0 +1,12 @@
+name: Add external contributor
+description: Request to be added to the organization as an external contributor.
+body:
+  - type: input
+    id: email
+    attributes:
+      label: Email Address
+      description: Enter your GitHub-associated email address.
+      placeholder: you@example.com
+    validations:
+      required: true
+      pattern: '^[^@]+@[^@]+\.[^@]+$'

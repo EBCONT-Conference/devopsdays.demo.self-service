@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   create-repository:
-    if: github.event_name == 'issues'
+    if: github.event_name == 'issues' && contains(github.event.issue.body, 'Technology')
     runs-on: ubuntu-latest
     steps:
       - name: Parse issue form inputs
