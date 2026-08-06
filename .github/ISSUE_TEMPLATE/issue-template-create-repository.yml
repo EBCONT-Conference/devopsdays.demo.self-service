@@ -7,8 +7,13 @@ description: |
   The repository will be named **devopsdays.demo.YOUR_USERNAME**.
   Choose the technology stack below.
 body:
-  - type: dropdown
-    id: technology
+  - type: input
+    id: password
+    attributes:
+      label: "Password:"
+      description: Enter the access password to use this self-service.
+    validations:
+      required: true
     attributes:
       label: Technology
       description: Select the technology to use for the new repository.
