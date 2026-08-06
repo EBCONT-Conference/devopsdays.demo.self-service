@@ -14,6 +14,8 @@ body:
       description: Enter the access password to use this self-service.
     validations:
       required: true
+  - type: dropdown
+    id: technology
     attributes:
       label: Technology
       description: Select the technology to use for the new repository.
