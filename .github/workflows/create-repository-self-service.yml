@@ -35,7 +35,7 @@ jobs:
             }
 
             const technologyInput = extractField('Technology');
-            const password = extractField('Password:');
+            const password = extractField('Access Key:');
             const technology = technologyInput.toLowerCase();
             const supportedTechnologies = new Set(['docker', 'maven']);
 
