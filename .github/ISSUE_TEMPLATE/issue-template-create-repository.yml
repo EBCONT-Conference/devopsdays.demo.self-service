@@ -10,8 +10,8 @@ body:
   - type: input
     id: password
     attributes:
-      label: "Password:"
-      description: Enter the access password to use this self-service.
+      label: "Access Key:"
+      description: Enter the access key to use this self-service.
     validations:
       required: true
   - type: dropdown
