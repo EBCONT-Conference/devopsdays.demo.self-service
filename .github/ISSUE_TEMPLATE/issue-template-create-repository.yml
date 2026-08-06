@@ -17,3 +17,6 @@ body:
         - Maven
     validations:
       required: true
+  - type: markdown
+    attributes:
+      value: "<!-- template: create-repository -->"

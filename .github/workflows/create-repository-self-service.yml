@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   create-repository:
-    if: contains(github.event.issue.labels.*.name, 'create-repository')
+    if: "contains(github.event.issue.body, '<!-- template: create-repository -->')"
     runs-on: ubuntu-latest
     steps:
       - name: Parse issue form inputs
