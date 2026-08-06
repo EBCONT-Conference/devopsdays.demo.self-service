@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   add-external-contributor:
-    if: github.event_name == 'issues' && contains(github.event.issue.body, 'Email Address')
+    if: github.event_name == 'issues' && contains(github.event.issue.body, 'GitHub Handle')
     runs-on: ubuntu-latest
     steps:
       - name: Parse issue form inputs
@@ -34,13 +34,13 @@ jobs:
                 .trim();
             }
 
-            const email = extractField('Email Address');
+            const username = extractField('GitHub Handle');
 
-            if (!email || !email.includes('@')) {
-              throw new Error(`Invalid email address: ${email}`);
+            if (!username) {
+              throw new Error('GitHub handle is required.');
             }
 
-            core.setOutput('email', email);
+            core.setOutput('username', username);
 
       - name: Notify issue - in progress
         env:
@@ -65,15 +65,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
           ORG: ${{ github.repository_owner }}
-          EMAIL: ${{ steps.parse.outputs.email }}
+          USERNAME: ${{ steps.parse.outputs.username }}
         run: |
           set -euo pipefail
 
-          # Look up the GitHub username by email
-          USERNAME="$(gh api /search/users?q="${EMAIL}+in:email" --jq '.items[0].login // empty')"
-
-          if [ -z "${USERNAME}" ]; then
-            echo "::error::No GitHub user found for email: ${EMAIL}"
+          # Verify the GitHub user exists
+          if ! gh api "/users/${USERNAME}" >/dev/null 2>&1; then
+            echo "::error::GitHub user '${USERNAME}' does not exist."
             exit 1
           fi
 
