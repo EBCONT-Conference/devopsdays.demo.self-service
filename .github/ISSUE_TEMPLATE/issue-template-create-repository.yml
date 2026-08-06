@@ -1,6 +1,10 @@
 name: Create repository self-service
-description: Request a new repository via self-service workflow input.
-title: "[issue-template-create-repository] "
+labels:
+ - "create-repository"
+description: |
+  Request a new repository via self-service workflow input.
+  The repository will be named **devopsdays.demo.YOUR_USERNAME**.
+  Choose the technology stack below.
 body:
   - type: dropdown
     id: technology
@@ -10,13 +14,5 @@ body:
       options:
         - Docker
         - Maven
-    validations:
-      required: true
-  - type: input
-    id: repository-name
-    attributes:
-      label: Repository Name
-      description: Enter the name of the repository to create.
-      placeholder: example-service
     validations:
       required: true

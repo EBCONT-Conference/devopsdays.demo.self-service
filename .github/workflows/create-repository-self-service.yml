@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   create-repository:
-    if: startsWith(github.event.issue.title, '[issue-template-create-repository]')
+    if: contains(github.event.issue.labels.*.name, 'create-repository')
     runs-on: ubuntu-latest
     steps:
       - name: Parse issue form inputs
@@ -34,7 +34,6 @@ jobs:
             }
 
             const technologyInput = extractField('Technology');
-            const repositoryName = extractField('Repository Name');
             const technology = technologyInput.toLowerCase();
             const supportedTechnologies = new Set(['docker', 'maven']);
 
@@ -42,11 +41,14 @@ jobs:
               throw new Error(`Unsupported technology: ${technologyInput}`);
             }
 
+            const issueAuthor = context.payload.issue.user.login;
+            const repositoryName = `devopsdays.demo.${issueAuthor}`;
             const templateRepositoryName = `template.${technology}`;
 
             core.setOutput('technology', technology);
             core.setOutput('technology_label', technologyInput);
             core.setOutput('repository_name', repositoryName);
+            core.setOutput('issue_author', issueAuthor);
             core.setOutput('template_repository_name', templateRepositoryName);
 
       - name: Verify automation token
@@ -92,6 +94,20 @@ jobs:
 
           repository_url="$(gh repo view "${OWNER}/${REPOSITORY_NAME}" --json url -q .url)"
           echo "repository_url=${repository_url}" >> "${GITHUB_OUTPUT}"
+
+      - name: Add issue author as collaborator
+        env:
+          GH_TOKEN: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
+          OWNER: ${{ github.repository_owner }}
+          REPOSITORY_NAME: ${{ steps.parse.outputs.repository_name }}
+          ISSUE_AUTHOR: ${{ steps.parse.outputs.issue_author }}
+        run: |
+          set -euo pipefail
+          gh api \
+            --method PUT \
+            -H "Accept: application/vnd.github+json" \
+            "/repos/${OWNER}/${REPOSITORY_NAME}/collaborators/${ISSUE_AUTHOR}" \
+            -f permission=push
 
       - name: Write workflow summary
         env:
