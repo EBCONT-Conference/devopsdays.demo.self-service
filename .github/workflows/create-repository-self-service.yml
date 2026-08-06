@@ -52,7 +52,7 @@ jobs:
             core.setOutput('issue_author', issueAuthor);
             core.setOutput('template_repository_name', templateRepositoryName);
 
-      - name: Notify issue: in progress
+      - name: Notify issue - in progress
         env:
           GH_TOKEN: ${{ github.token }}
           RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
@@ -134,7 +134,7 @@ jobs:
             echo "| Technology | ${TECHNOLOGY} |"
           } >> "${GITHUB_STEP_SUMMARY}"
 
-      - name: Notify issue: completed
+      - name: Notify issue - completed
         env:
           GH_TOKEN: ${{ github.token }}
           REPOSITORY_URL: ${{ steps.create_repository.outputs.repository_url }}
