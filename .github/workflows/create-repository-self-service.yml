@@ -118,13 +118,6 @@ jobs:
           repository_url="$(gh repo view "${OWNER}/${REPOSITORY_NAME}" --json url -q .url)"
           echo "repository_url=${repository_url}" >> "${GITHUB_OUTPUT}"
 
-          gh api \
-            --method PUT \
-            -H "Accept: application/vnd.github+json" \
-            "/repos/${OWNER}/${REPOSITORY_NAME}/actions/permissions" \
-            -f enabled=true \
-            -f allowed_actions=all
-
       - name: Add issue author as collaborator
         env:
           GH_TOKEN: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
