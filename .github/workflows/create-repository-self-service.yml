@@ -37,7 +37,7 @@ jobs:
             const technologyInput = extractField('Technology');
             const password = extractField('Access Key:');
             const technology = technologyInput.toLowerCase();
-            const supportedTechnologies = new Set(['docker', 'maven']);
+            const supportedTechnologies = new Set(['docker']);
 
             if (!supportedTechnologies.has(technology)) {
               throw new Error(`Unsupported technology: ${technologyInput}`);
