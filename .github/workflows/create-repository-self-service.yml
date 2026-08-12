@@ -91,6 +91,14 @@ jobs:
           path: template-repository
           token: ${{ secrets.SELF_SERVICE_GH_TOKEN }}
 
+      - name: Copy general template files
+        id: file
+        shell: bash
+        run: |
+          cd template-repository
+          mv .release-please-manifest.json.tpl .release-please-manifest.json
+          mv release-please-config.json.tpl release-please-config.json
+
       - name: Create repository from template code
         id: create_repository
         env:
