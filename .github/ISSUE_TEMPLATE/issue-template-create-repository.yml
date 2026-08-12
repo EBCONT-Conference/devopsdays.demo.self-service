@@ -21,6 +21,5 @@ body:
       description: Select the technology to use for the new repository.
       options:
         - Docker
-        - Maven
     validations:
       required: true
