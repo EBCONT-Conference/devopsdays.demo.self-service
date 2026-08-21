@@ -160,7 +160,7 @@ jobs:
             --method PUT \
             -H "Accept: application/vnd.github+json" \
             "/repos/${OWNER}/${REPOSITORY_NAME}/collaborators/${ISSUE_AUTHOR}" \
-            -f permission=push
+            -f role_name=EditCustomPropertyValue
 
       - name: Write workflow summary
         env:
