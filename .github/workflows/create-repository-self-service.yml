@@ -157,19 +157,12 @@ jobs:
         run: |
           set -euo pipefail
           
-          ROLE_ID="$(
-            gh api \
-              -H "Accept: application/vnd.github+json" \
-              "/orgs/${OWNER}/custom-repository-roles" \
-              --jq '.custom_roles[] | select(.name=="EditCustomPropertyValue") | .id'
-          )"
-          
           gh api \
             --method PUT \
             -H "Accept: application/vnd.github+json" \
             -H "X-GitHub-Api-Version: 2022-11-28" \
             "/repos/${OWNER}/${REPOSITORY_NAME}/collaborators/${ISSUE_AUTHOR}" \
-            -F custom_role_id="${ROLE_ID}"
+            -f permission="EditCustomPropertyValue"
 
       - name: Write workflow summary
         env:
