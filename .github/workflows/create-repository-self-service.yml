@@ -157,10 +157,12 @@ jobs:
         run: |
           set -euo pipefail
           
-          ROLE_ID=$(gh api \
-            -H "Accept: application/vnd.github+json" \
-            "/orgs/${OWNER}/custom-roles" \
-            --jq '.custom_roles[] | select(.name=="EditCustomPropertyValue") | .id')
+          ROLE_ID="$(
+            gh api \
+              -H "Accept: application/vnd.github+json" \
+              "/orgs/${OWNER}/custom-repository-roles" \
+              --jq '.custom_roles[] | select(.name=="EditCustomPropertyValue") | .id'
+          )"
           
           gh api \
             --method PUT \
