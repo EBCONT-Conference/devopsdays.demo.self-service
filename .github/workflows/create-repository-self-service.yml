@@ -44,7 +44,7 @@ jobs:
             }
 
             const issueAuthor = context.payload.issue.user.login;
-            const repositoryName = `devopsdays.demo.${issueAuthor}`;
+            const repositoryName = `devopsdays.participant.${issueAuthor}`;
             const templateRepositoryName = `template.${technology}`;
 
             core.setOutput('technology', technology);
