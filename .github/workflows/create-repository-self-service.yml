@@ -98,6 +98,7 @@ jobs:
           cd template-repository
           mv .release-please-manifest.json.tpl .release-please-manifest.json
           mv release-please-config.json.tpl release-please-config.json
+          mv CHANGELOG.md.tpl CHANGELOG.md
 
       - name: Populate release-please file
         env:

@@ -29,10 +29,7 @@ This repository contains a self-service workflow for participants of the **DevOp
 
 # Contacts
 
-| Name | Contact      |
-| --- | --------------|
-| Aleksei Zubkov | aleksei.zubkov@ebcont.com |
-| Andreas Titz | andreas.titz@ebcont.com |
+- [EBCONT Conference Team](mailto:github@ebcont.com)
 
  
 
